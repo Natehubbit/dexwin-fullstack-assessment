@@ -1,11 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { getProjects } from '../api/client';
 
 export default function ProjectList({ selectedProjectId, onSelect }) {
   const [projects, setProjects] = useState([]);
 
+  const getProjectsResult = useCallback( async () => {
+    try {
+      const data = await getProjects();
+      setProjects(data);
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    }
+  }, []);
+
   useEffect(() => {
-    getProjects().then(setProjects);
+    getProjectsResult();
   }, []);
 
   return (

@@ -9,13 +9,18 @@ export default function TaskBoard({ projectId }) {
     getTasks(projectId).then((data) => {
       setTasks(data);
     });
-  }, []);
+  }, [projectId]);
 
-  const handleToggle = (task) => {
-    const next = task.status === 'DONE' ? 'TODO' : 'DONE';
-    task.status = next;
-    setTasks(tasks);
-    updateTaskStatus(task.id, next);
+  const handleToggle = async(task) => {
+    try {
+      const next = task.status === 'DONE' ? 'TODO' : 'DONE';
+      task.status = next;
+      await updateTaskStatus(task.id, next);
+      setTasks(tasks.map((t) => (t.id === task.id ? { ...t, status: next } : t)));
+    } catch (error) {
+      console.error('Error updating task status:', error);
+    }
+    
   };
 
   return (
